@@ -16,7 +16,7 @@ let invulntime, invulnerable
 let monsterTurn=0;
 let gameIsOver;
 let gameWin;
-let score=0;
+let score;
 let scoreText;
 let gameTime;
 
@@ -80,7 +80,7 @@ allPlatforms.forEach(function (_platforms) {
 })
 
 
-scoreText = Game.add.text(2800,20,"Time:" + score, { fontFamily: 'Arial', fontSize: 64, color: '#00ff00'})
+
 }
 function update() {
     gameTime=Game.time.now;
@@ -90,15 +90,14 @@ function update() {
     //console.log(invulntime + "INVULNTIME")
     //console.log(invulnerable + " STATE")
     //console.log(lives)
-    Game.physics.arcade.collide(player, allCoins, onCoin)
-    Game.physics.arcade.collide(player, allKeys, onKey)
+    Game.physics.arcade.overlap(player, allCoins, onCoin)
+    Game.physics.arcade.overlap(player, allKeys, onKey)
     
     Game.physics.arcade.collide(player, allSpikes, onHit)
     Game.physics.arcade.overlap(player, monster, onHit);
 
 
     Game.physics.arcade.collide(player, goal, onGoal)
-    //Game.physics.arcade.overlap(player, goal, onGoal);
 
 
     if (Game.time.now >= invulntime) {
@@ -157,8 +156,6 @@ function update() {
 
     monsterMove()
     updateStats()
-
-    fillScore()
 
     if(lives==0){
         end();
@@ -404,18 +401,20 @@ function onKey(sprite1, sprite2) {
 
 function onGoal(sprite1, sprite2) {
     if (keys == 3) {
-        
-        //gameWin = Game.add.sprite(0,0,'win')
-        //gameWin.fixedToCamera=true;
-       // gameWin.height=440;
-       // gameWin.width=780;
-        //console.log(scoreText)
         sprite2.destroy()
+        gameWin = Game.add.sprite(0,0,'win')
+        gameWin.fixedToCamera=true;
+        gameWin.height=440;
+        gameWin.width=780;
+        score = gameTime*coins;
+        console.log(score)
+        scoreText = Game.add.text(coinsicon.x, coinsicon.y, "Score: " + score, { fontFamily: 'Arial', fontSize: 64, color: '#00ff00', boundsAlignH: "center"})
+        scoreText.fixedToCamera = true
         Game.paused=true;
 
+
     } else {
-        alert("you need 3 keys bozo")
-        
+        alert("you need 3 keys!")
     }
 }
 function end(){
@@ -430,11 +429,4 @@ function invuln() {
     invulnerable = true
     player.alpha = 0.5
     invulntime = Game.time.now + 3000
-}
-
-function fillScore (){
-        score= gameTime-(coins-1300);
-        //console.log(score)
-        scoreText.setText("Time:" + score);
-        //scoreText.fixedToCamera = true
 }
